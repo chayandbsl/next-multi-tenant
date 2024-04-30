@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Product 1",
+    "bizid": 2,
+    "slug": "product-1",
+    "description": "Description of Product 1 goes here.",
+    "price": 99.99,
+    "image": "/product.jpg",
+    "new": true,
+    "domain": "example.com",
+    "subdomain": "app.localhost:3000"
+  },
+  {
+    "name": "Product 2",
+    "bizid": 2,
+    "slug": "product-2",
+    "description": "Description of Product 2 goes here.",
+    "price": 129.99,
+    "image": "/product.jpg",
+    "new": false,
+    "domain": "example.com",
+    "subdomain": "app.localhost:3000"
+  },
+  {
+    "name": "Product 3",
+    "bizid": 3,
+    "slug": "product-3",
+    "description": "Description of Product 3 goes here.",
+    "price": 79.99,
+    "image": "/product.jpg",
+    "new": false,
+    "domain": "example.com",
+    "subdomain": "karim.localhost:3000"
+  },
+  {
+    "name": "Product 4",
+    "bizid": 1,
+    "slug": "product-4",
+    "description": "Description of Product 4 goes here.",
+    "price": 149.99,
+    "image": "/product.jpg",
+    "new": true,
+    "domain": "example.com",
+    "subdomain": "app.localhost:3000"
+  },
+  {
+    "name": "Product 5",
+    "bizid": 1,
+    "slug": "product-5",
+    "description": "Description of Product 5 goes here.",
+    "price": 89.99,
+    "image": "/product.jpg",
+    "new": false,
+    "domain": "example.com",
+    "subdomain": "karim.localhost:3000"
+  },
+  {
+    "name": "Product 6",
+    "bizid": 1,
+    "slug": "product-6",
+    "description": "Description of Product 6 goes here.",
+    "price": 199.99,
+    "image": "/product.jpg",
+    "new": false,
+    "domain": "example.com",
+    "subdomain": "karim.localhost:3000"
+  },
+  {
+    "name": "Product 7",
+    "bizid": 1,
+    "slug": "product-7",
+    "description": "Description of Product 7 goes here.",
+    "price": 69.99,
+    "image": "/product.jpg",
+    "new": true,
+    "domain": "example.com",
+    "subdomain": "karim.localhost:3000"
+  },
+  {
+    "name": "Product 8",
+    "bizid": 1,
+    "slug": "product-8",
+    "description": "Description of Product 8 goes here.",
+    "price": 109.99,
+    "image": "/product.jpg",
+    "new": false,
+    "domain": "example.com",
+    "subdomain": "karim.localhost:3000"
+  },
+  {
+    "name": "Product 9",
+    "bizid": 1,
+    "slug": "product-9",
+    "description": "Description of Product 9 goes here.",
+    "price": 159.99,
+    "image": "/product.jpg",
+    "new": false,
+    "domain": "example.com",
+    "subdomain": "app.localhost:3000  "
+  },
+  {
+    "name": "Product 10",
+    "bizid": 1,
+    "slug": "product-10",
+    "description": "Description of Product 10 goes here.",
+    "price": 79.99,
+    "image": "/product.jpg",
+    "new": true,
+    "domain": "example.com",
+    "subdomain": "karim.localhost:3000"
+  }
+]

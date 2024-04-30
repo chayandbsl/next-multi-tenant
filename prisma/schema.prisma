@@ -1,0 +1,395 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model author {
+  xauthorid Int      @id @default(autoincrement())
+  bizid     Int
+  xfullname String   @db.VarChar(255)
+  xaddress  String?  @db.VarChar(255)
+  xmobile   String?  @db.VarChar(15)
+  ximage    String?  @db.VarChar(300)
+  zactive   Int      @default(1)
+  seitem    seitem[]
+}
+
+model category {
+  xcatsl      Int           @id @default(autoincrement())
+  bizid       Int
+  xcat        String        @db.VarChar(250)
+  ximage      String?       @db.VarChar(250)
+  zbusiness   zbusiness     @relation(fields: [bizid], references: [bizid], onUpdate: Restrict, map: "fk_zbusiness_category")
+  seitem      seitem[]
+  subcategory subcategory[]
+
+  @@unique([bizid, xcat], map: "bizid")
+}
+
+model ecomdeliverydet {
+  xdeldetsl       Int             @id @default(autoincrement()) @db.UnsignedInt
+  ztime           DateTime        @default(now()) @db.Timestamp(0)
+  zemail          String          @db.VarChar(100)
+  bizid           Int
+  xecomsl         Int
+  xecomdetsl      Int
+  xdelmstsl       Int             @db.UnsignedInt
+  xrow            Int             @default(1)
+  xdate           DateTime        @db.Date
+  xcus            String          @db.VarChar(20)
+  xitemcode       String          @db.VarChar(20)
+  xwh             String?         @db.VarChar(50)
+  xbranch         String?         @db.VarChar(50)
+  xproj           String?         @db.VarChar(50)
+  xqty            Float
+  xpaymethod      String          @db.VarChar(50)
+  xunitsale       String?         @db.VarChar(20)
+  xtypestk        String?         @db.VarChar(20)
+  xexch           Float           @default(1)
+  xcur            String          @default("BDT") @db.VarChar(10)
+  xyear           Int             @default(0)
+  xper            Int             @default(0)
+  xstatus         String          @default("Pending") @db.VarChar(50)
+  ecomdeliverymst ecomdeliverymst @relation(fields: [xdelmstsl], references: [xdelmstsl], onUpdate: Restrict, map: "fk_ecomdeliverymst_ecomdeliverydet")
+  secus           secus           @relation(fields: [bizid, xcus], references: [bizid, xcus], onUpdate: Restrict, map: "fk_secus_ecomdeliverydet")
+  seitem          seitem          @relation(fields: [bizid, xitemcode], references: [bizid, xitemcode], onUpdate: Restrict, map: "fk_seitem_ecomdeliverydet")
+
+  @@index([bizid, xdate, xcus, xitemcode], map: "bizid")
+  @@index([bizid, xcus], map: "fk_secus_ecomdeliverydet")
+  @@index([bizid, xitemcode], map: "fk_seitem_ecomdeliverydet")
+  @@index([xdelmstsl], map: "xdelmstsl")
+}
+
+model ecomdeliverymst {
+  xdelmstsl       Int               @id @default(autoincrement()) @db.UnsignedInt
+  ztime           DateTime          @default(now()) @db.Timestamp(0)
+  zutime          DateTime?         @db.DateTime(0)
+  zemail          String            @db.VarChar(100)
+  xemail          String?           @db.VarChar(100)
+  xecomsl         Int
+  bizid           Int
+  xdate           DateTime          @db.Date
+  xcus            String            @db.VarChar(20)
+  xdelname        String?           @db.VarChar(250)
+  xdeladdress     String?           @db.VarChar(500)
+  xdelcompany     String?           @db.VarChar(250)
+  xdelmethod      String?           @db.VarChar(250)
+  xdelemail       String?           @db.VarChar(150)
+  xmobile         String?           @db.VarChar(15)
+  xpaymethod      String            @db.VarChar(50)
+  xdistrict       String?           @db.VarChar(50)
+  xthana          String?           @db.VarChar(100)
+  xpostal         String?           @db.VarChar(10)
+  xnotes          String?           @db.MediumText
+  xbranch         String?           @db.VarChar(50)
+  xwh             String?           @db.VarChar(50)
+  xproj           String?           @db.VarChar(50)
+  xstatus         String            @db.VarChar(20)
+  xrecflag        String            @default("Live") @db.VarChar(20)
+  xyear           Int
+  xper            Int
+  ecomdeliverydet ecomdeliverydet[]
+
+  @@index([bizid, xcus], map: "bizid")
+  @@index([xdelmstsl], map: "xdelmstsl")
+}
+
+model ecomsales_temp {
+  xtemsl     Int      @id @default(autoincrement())
+  ztime      DateTime @default(now()) @db.Timestamp(0)
+  xdate      DateTime @db.Date
+  bizid      Int
+  xcus       String   @db.VarChar(20)
+  xmobile    String   @db.VarChar(15)
+  xitemcode  String   @db.VarChar(20)
+  xprice     Decimal  @db.Decimal(10, 4)
+  xqty       Int
+  xref       String   @db.VarChar(100)
+  xstatus    String   @db.VarChar(30)
+  xdocnum    Int?
+  xtxnmobile String   @db.VarChar(11)
+  xtxnnum    String   @unique(map: "xtxnnum") @db.VarChar(30)
+  xoperator  String   @db.VarChar(100)
+  secus      secus    @relation(fields: [bizid, xcus], references: [bizid, xcus], onUpdate: Restrict, map: "fk_secus_ecomsales_temp")
+  seitem     seitem   @relation(fields: [bizid, xitemcode], references: [bizid, xitemcode], onUpdate: Restrict, map: "fk_seitem_ecomsales_temp")
+
+  @@index([bizid, xcus, xitemcode], map: "bizid")
+  @@index([bizid, xitemcode], map: "fk_seitem_ecomsales_temp")
+}
+
+model ecomsalesdet {
+  xecomdetsl   Int          @unique(map: "xecomdetsl") @default(autoincrement()) @db.UnsignedInt
+  ztime        DateTime     @default(now()) @db.Timestamp(0)
+  zemail       String       @db.VarChar(100)
+  bizid        Int
+  xdate        DateTime     @db.Date
+  xecomsl      Int          @db.UnsignedInt
+  xcus         String       @db.VarChar(20)
+  xrow         Int          @default(1)
+  xitemcode    String       @db.VarChar(20)
+  xwh          String?      @db.VarChar(50)
+  xbranch      String?      @db.VarChar(50)
+  xproj        String?      @db.VarChar(50)
+  xqty         Float
+  xdelqty      Float        @default(0)
+  xcost        Float        @default(0)
+  xrate        Float
+  xpaymethod   String       @db.VarChar(50)
+  xpoint       Float        @default(0)
+  xunitsale    String?      @db.VarChar(20)
+  xtypestk     String?      @db.VarChar(20)
+  xexch        Float        @default(1)
+  xcur         String       @default("BDT") @db.VarChar(10)
+  xdisc        Float        @default(0)
+  xtaxrate     Float        @default(0)
+  xtaxcode     String?      @db.VarChar(20)
+  xtaxscope    String?      @db.VarChar(20)
+  xyear        Int          @default(0)
+  xper         Int          @default(0)
+  xstatus      String       @default("Pending") @db.VarChar(50)
+  ecomsalesmst ecomsalesmst @relation(fields: [xecomsl], references: [xecomsl], onUpdate: Restrict, map: "fk_ecomsalesmst_ecomsalesdet")
+  secus        secus        @relation(fields: [bizid, xcus], references: [bizid, xcus], onUpdate: Restrict, map: "fk_secus_ecomsalesdet")
+  seitem       seitem       @relation(fields: [bizid, xitemcode], references: [bizid, xitemcode], onUpdate: Restrict, map: "fk_seitem_ecomsalesdet")
+
+  @@index([bizid, xdate, xecomsl, xcus, xitemcode], map: "bizid")
+  @@index([xecomsl], map: "fk_ecomsalesmst_ecomsalesdet")
+  @@index([bizid, xcus], map: "fk_secus_ecomsalesdet")
+  @@index([bizid, xitemcode], map: "fk_seitem_ecomsalesdet")
+}
+
+model ecomsalesmst {
+  xecomsl      Int            @id @default(autoincrement()) @db.UnsignedInt
+  ztime        DateTime       @default(now()) @db.Timestamp(0)
+  zutime       DateTime?      @db.DateTime(0)
+  zemail       String         @db.VarChar(100)
+  xemail       String?        @db.VarChar(100)
+  bizid        Int
+  xdate        DateTime       @db.Date
+  xcus         String         @db.VarChar(20)
+  xdelname     String?        @db.VarChar(250)
+  xdeladdress  String?        @db.VarChar(500)
+  xdelcompany  String?        @db.VarChar(250)
+  xdelmethod   String?        @db.VarChar(250)
+  xdelemail    String?        @db.VarChar(150)
+  xmobile      String?        @db.VarChar(15)
+  xpaymethod   String         @db.VarChar(50)
+  xdistrict    String?        @db.VarChar(50)
+  xthana       String?        @db.VarChar(100)
+  xpostal      String?        @db.VarChar(10)
+  xgrossdisc   Float          @default(0)
+  xnotes       String?        @db.MediumText
+  xbranch      String?        @db.VarChar(50)
+  xwh          String?        @db.VarChar(50)
+  xproj        String?        @db.VarChar(50)
+  xstatus      String         @db.VarChar(20)
+  xrecflag     String         @default("Live") @db.VarChar(20)
+  xyear        Int
+  xper         Int
+  ecomsalesdet ecomsalesdet[]
+  secus        secus          @relation(fields: [bizid, xcus], references: [bizid, xcus], onUpdate: Restrict, map: "fk_secus_ecomsalesmst")
+
+  @@index([bizid, xcus], map: "bizid")
+  @@index([xecomsl], map: "xecomsl")
+}
+
+model secus {
+  xcusid          Int               @id @default(autoincrement()) @db.UnsignedInt
+  ztime           DateTime          @default(now()) @db.Timestamp(0)
+  zemail          String            @db.VarChar(100)
+  zutime          DateTime?         @db.DateTime(0)
+  xemail          String?           @db.VarChar(100)
+  bizid           Int
+  xcus            String            @db.VarChar(20)
+  xshort          String?           @db.VarChar(255)
+  xorg            String?           @db.VarChar(255)
+  xaddress1       String?           @db.VarChar(300)
+  xaddress2       String?           @db.VarChar(300)
+  xcity           String?           @db.VarChar(50)
+  xstate          String?           @db.VarChar(50)
+  xcountry        String?           @db.VarChar(50)
+  xcontact        String?           @db.VarChar(50)
+  xphone          String?           @db.VarChar(20)
+  xmobile         String            @db.VarChar(15)
+  xpassword       String?           @db.VarChar(256)
+  xnid            String?           @db.VarChar(20)
+  xtaxno          String?           @db.VarChar(20)
+  xtaxscope       String?           @db.VarChar(100)
+  xgcus           String?           @db.VarChar(50)
+  xcustype        String?           @db.VarChar(50)
+  xempclosed      String?           @db.VarChar(20)
+  xdiscountpct    Float?
+  xemp            String            @db.VarChar(50)
+  xcreditlimit    Float?
+  zactive         Int?
+  ecomdeliverydet ecomdeliverydet[]
+  ecomsales_temp  ecomsales_temp[]
+  ecomsalesdet    ecomsalesdet[]
+  ecomsalesmst    ecomsalesmst[]
+  zbusiness       zbusiness         @relation(fields: [bizid], references: [bizid], onUpdate: Restrict, map: "fk_zbusiness_secus")
+
+  @@unique([bizid, xcus], map: "unq_bizid_cus")
+}
+
+model seitem {
+  xitemid         Int               @id @default(autoincrement())
+  ztime           DateTime          @default(now()) @db.Timestamp(0)
+  zemail          String            @db.VarChar(100)
+  bizid           Int
+  xitemcode       String            @db.VarChar(20)
+  xdesc           String            @db.VarChar(500)
+  xlongdesc       String            @db.VarChar(1500)
+  xcatsl          Int
+  xcat            String?           @db.VarChar(250)
+  xsubcatsl       Int
+  xsubcat         String?           @db.VarChar(250)
+  xauthorid       Int
+  xauthorname     String?           @db.VarChar(255)
+  xtype           String?           @db.VarChar(50)
+  xbrand          String?           @db.VarChar(50)
+  xgitem          String?           @db.VarChar(50)
+  xcitem          String?           @db.VarChar(50)
+  xsupport        String?           @db.VarChar(1000)
+  xsup            String?           @db.VarChar(20)
+  xunitpur        String?           @db.VarChar(20)
+  xunitsale       String?           @db.VarChar(20)
+  xunitstk        String?           @db.VarChar(20)
+  xconversionstk  Decimal           @default(0.00) @db.Decimal(10, 2)
+  xconversionsell Decimal           @default(0.00) @db.Decimal(10, 2)
+  xmandatorybatch String?           @default("No") @db.VarChar(20)
+  xserialconf     String            @default("None") @db.VarChar(20)
+  xtypestk        String            @default("Stocking") @db.VarChar(20)
+  xreorder        Decimal           @default(0.00) @db.Decimal(10, 2)
+  xcur            String?           @db.VarChar(9)
+  xpricepur       Decimal?          @db.Decimal(10, 2)
+  xstdcost        Decimal?          @default(0.00) @db.Decimal(10, 2)
+  xmrp            Decimal?          @db.Decimal(10, 2)
+  xstdprice       Decimal           @db.Decimal(10, 2)
+  xstock          Decimal           @default(0.00) @db.Decimal(10, 2)
+  xdisc           Decimal           @default(0.00) @db.Decimal(10, 2)
+  xhscode         String?           @db.VarChar(50)
+  xweight         Decimal           @default(0.00) @db.Decimal(10, 2)
+  xvatpct         Decimal           @default(0.00) @db.Decimal(10, 2)
+  zactive         Int               @default(1)
+  xfeature        String?           @db.VarChar(1500)
+  ximages         String?           @db.VarChar(500)
+  ecomdeliverydet ecomdeliverydet[]
+  ecomsales_temp  ecomsales_temp[]
+  ecomsalesdet    ecomsalesdet[]
+  author          author            @relation(fields: [xauthorid], references: [xauthorid], onUpdate: Restrict, map: "fk_author_seitem")
+  category        category          @relation(fields: [xcatsl], references: [xcatsl], onUpdate: Restrict, map: "fk_category_seitem")
+  subcategory     subcategory       @relation(fields: [xsubcatsl], references: [xsubcatsl], onUpdate: Restrict, map: "fk_subcategory_seitem")
+
+  @@unique([bizid, xitemcode], map: "uniq_bizid_xitemcode")
+  @@index([xsubcatsl], map: "fk_subcategory_seitem")
+  @@index([xauthorid], map: "xauthorid")
+  @@index([xcatsl, xsubcatsl], map: "xcatsl")
+}
+
+model subcategory {
+  xsubcatsl Int      @id @default(autoincrement())
+  bizid     Int
+  xcatsl    Int
+  xsubcat   String   @db.VarChar(250)
+  xgroup    String?  @db.VarChar(250)
+  seitem    seitem[]
+  category  category @relation(fields: [xcatsl], references: [xcatsl], onUpdate: Restrict, map: "fk_category_subcategory")
+
+  @@unique([bizid, xcatsl, xsubcat], map: "bizid")
+  @@index([xcatsl], map: "fk_category_subcategory")
+}
+
+model zbusiness {
+  bizid       Int        @id @default(autoincrement())
+  ztime       DateTime?  @default(now()) @db.Timestamp(0)
+  xcontact    String     @db.VarChar(250)
+  xorg        String     @db.VarChar(250)
+  xbranch     String     @db.VarChar(250)
+  xphone      String?    @db.VarChar(50)
+  xmobile     String     @db.VarChar(60)
+  xemail      String     @unique(map: "xemail_UNIQUE") @db.VarChar(250)
+  xaddress1   String     @db.VarChar(250)
+  xaddress2   String?    @db.VarChar(250)
+  xcountry    String?    @db.VarChar(45)
+  xstate      String?    @db.VarChar(100)
+  xcity       String?    @db.VarChar(100)
+  xsmsapiurl  String?    @db.VarChar(1000)
+  xpromoemail String?    @db.VarChar(250)
+  xsmtphost   String?    @db.VarChar(250)
+  xport       Int?
+  xsmtpuser   String?    @db.VarChar(250)
+  xsmtppass   String?    @db.VarChar(45)
+  xdomain     String?    @unique(map: "xdomain") @db.VarChar(255)
+  xdomainuser String?    @db.VarChar(255)
+  xdomainpass String?    @db.VarChar(100)
+  xsubdomain  String?    @db.VarChar(255)
+  xfbpageurl  String?    @db.VarChar(500)
+  zactive     Int        @default(1)
+  category    category[]
+  secus       secus[]
+  zrole       zrole[]
+  zuser       zuser[]
+
+  @@index([xorg], map: "indx_org")
+}
+
+model zcodes {
+  xcodeid   Int       @id @default(autoincrement())
+  bizid     Int
+  ztime     DateTime? @default(now()) @db.Timestamp(0)
+  xusername String    @db.VarChar(100)
+  xcodetype String?   @db.VarChar(150)
+  xcode     String    @db.VarChar(250)
+  xdepcode  String?   @db.VarChar(250)
+  xrem      String?   @db.VarChar(250)
+  zactive   Int       @default(1)
+
+  @@index([bizid, xcode], map: "indx_bizid_codes")
+  @@index([bizid, xcodetype], map: "indx_bizid_codetype")
+}
+
+model zrole {
+  xroleid   Int       @id @default(autoincrement())
+  ztime     DateTime? @default(now()) @db.Timestamp(0)
+  zemail    String    @db.VarChar(100)
+  bizid     Int
+  xrole     String    @db.VarChar(100)
+  xroledt   String    @db.VarChar(5000)
+  zbusiness zbusiness @relation(fields: [bizid], references: [bizid], onUpdate: Restrict, map: "fk_zbusiness_zrole")
+  zuser     zuser[]
+
+  @@unique([bizid, xrole], map: "unq_bizid_role")
+}
+
+model zuser {
+  xuserid     Int       @id @default(autoincrement())
+  ztime       DateTime? @default(now()) @db.Timestamp(0)
+  bizid       Int
+  xusername   String    @db.VarChar(100)
+  xpassword   String    @db.VarChar(256)
+  xfullname   String    @db.VarChar(250)
+  xusermobile String?   @db.VarChar(45)
+  xuseremail  String?   @db.VarChar(250)
+  xorg        String    @db.VarChar(250)
+  xbranch     String    @db.VarChar(250)
+  xrole       String    @db.VarChar(100)
+  xaddress1   String    @db.VarChar(250)
+  xaddress2   String?   @db.VarChar(250)
+  xcountry    String?   @db.VarChar(45)
+  xstate      String?   @db.VarChar(100)
+  xcity       String?   @db.VarChar(100)
+  xip         String?   @db.VarChar(64)
+  xmac        String?   @db.VarChar(64)
+  xlic        String?   @db.VarChar(64)
+  xlicused    String?   @db.VarChar(64)
+  zactive     Int       @default(1)
+  zbusiness   zbusiness @relation(fields: [bizid], references: [bizid], onUpdate: Restrict, map: "fk_zbusiness_zuser")
+  zrole       zrole     @relation(fields: [bizid, xrole], references: [bizid, xrole], onUpdate: Restrict, map: "fk_zrole_zuser")
+
+  @@unique([bizid, xusername], map: "unique_bizid_username")
+  @@index([bizid, xrole], map: "fk_zrole_zuser")
+  @@index([xrole], map: "xrole")
+}
