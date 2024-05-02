@@ -11,7 +11,6 @@ interface Session {
 
 export default async function Dashboard() {
   const session: Session | null = await getSession();
-
   if (!session) {
     redirect("/login");
   }

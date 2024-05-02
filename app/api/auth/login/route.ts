@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       where: {
         xmobile: mobile,
         zbusiness: {
-          xsubdomain: hostName,
+          xdomain: hostName,
         },
       },
       select: {
